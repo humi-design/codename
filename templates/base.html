@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090B12">
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <meta name="description" content="Codenames Live - a real-time Codenames-style board game controller for Starmaker voice rooms.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% if adsense.enabled and adsense.publisher_id %}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense.publisher_id }}" crossorigin="anonymous"></script>
+  {% endif %}
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="{{ url_for('main.index') }}">CODENAMES<span>LIVE</span></a>
+      <div class="header-right">
+        <span class="conn" id="conn-status"><span class="dot"></span><span id="conn-text">Connected</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="flash {{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <div class="toast-area" id="toast-area" aria-live="polite"></div>
+
+  {% block overlays %}{% endblock %}
+  {% block sticky %}{% endblock %}
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin sessions - {{ app_name }}{% endblock %}
+{% block admin_content %}
+
+<section class="card">
+  <h2>Sessions</h2>
+  <form method="get" class="grid-2" style="align-items:end;">
+    <div class="field" style="margin:0;">
+      <label for="q">Search (code or host)</label>
+      <input type="text" id="q" name="q" value="{{ search or '' }}" placeholder="X7K9P">
+    </div>
+    <div class="field" style="margin:0;">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="">All</option>
+        <option value="ACTIVE" {{ 'selected' if status == 'ACTIVE' else '' }}>Active</option>
+        <option value="ENDED" {{ 'selected' if status == 'ENDED' else '' }}>Ended</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" type="submit" style="grid-column:1/-1;">SEARCH</button>
+  </form>
+</section>
+
+<section class="card">
+  {% if sessions %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead><tr><th>Code</th><th>Host</th><th>Players</th><th>Rounds</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for s in sessions %}
+        <tr>
+          <td><strong>{{ s.session_code }}</strong></td>
+          <td>{{ s.host_name }}</td>
+          <td>{{ s.players|length }}</td>
+          <td>{{ s.rounds|length }}</td>
+          <td><span class="pill {{ 'active' if s.status == 'ACTIVE' else 'ended' }}">{{ s.status }}</span></td>
+          <td>{{ s.created_at|datetimeformat }}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('admin.session_detail', session_id=s.id) }}">View</a>
+            {% if s.status == 'ACTIVE' %}
+            <form method="post" action="{{ url_for('admin.terminate_session', session_id=s.id) }}"
+                  style="display:inline;" onsubmit="return confirm('Terminate this session?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">Terminate</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="btn-row" style="margin-top:12px;">
+    {% if pagination.has_prev %}
+    <a class="btn btn-sm" href="{{ url_for('admin.sessions', page=pagination.prev_num, q=search, status=status) }}">&larr; Prev</a>
+    {% endif %}
+    <span class="muted small" style="align-self:center;">Page {{ pagination.page }} of {{ pagination.pages or 1 }}</span>
+    {% if pagination.has_next %}
+    <a class="btn btn-sm" href="{{ url_for('admin.sessions', page=pagination.next_num, q=search, status=status) }}">Next &rarr;</a>
+    {% endif %}
+  </div>
+  {% else %}
+  <p class="muted small">No sessions found.</p>
+  {% endif %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Session {{ game_session.session_code }} - Admin{% endblock %}
+{% block admin_content %}
+
+<section class="card">
+  <div class="row-between">
+    <h2 style="margin:0;">Session {{ game_session.session_code }}</h2>
+    <span class="pill {{ 'active' if game_session.status == 'ACTIVE' else 'ended' }}">{{ game_session.status }}</span>
+  </div>
+  <p class="muted small">
+    Host: {{ game_session.host_name }}<br>
+    Created: {{ game_session.created_at|datetimeformat }}<br>
+    Ended: {{ game_session.ended_at|datetimeformat }}<br>
+    Players: {{ summary.players }} &middot; Rounds: {{ summary.rounds_played }} &middot;
+    Red wins: {{ summary.red_wins }} &middot; Blue wins: {{ summary.blue_wins }}
+  </p>
+  {% if game_session.status == 'ACTIVE' %}
+  <form method="post" action="{{ url_for('admin.terminate_session', session_id=game_session.id) }}"
+        onsubmit="return confirm('Terminate this session?');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-danger" type="submit">TERMINATE SESSION</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Rounds</h2>
+  {% if rounds %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead><tr><th>#</th><th>Status</th><th>Winner</th><th>Captain</th><th>Started</th><th>Ended</th></tr></thead>
+      <tbody>
+        {% for r in rounds %}
+        <tr>
+          <td>{{ r.round_number }}</td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.winner or '-' }}</td>
+          <td>{{ r.captain.display_name if r.captain else '-' }}</td>
+          <td>{{ r.started_at|datetimeformat }}</td>
+          <td>{{ r.ended_at|datetimeformat }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted small">No rounds.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Players</h2>
+  <ul class="player-list">
+    {% for p in players %}
+    <li><span class="{{ 'dot-on' if p.is_connected else 'dot-off' }}">&#9679;</span>
+      <span class="pname">{{ p.display_name }}</span>
+      {% if p.is_host %}<span class="tag host">HOST</span>{% endif %}
+      <span class="muted small">joined {{ p.joined_at|datetimeformat }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="card">
+  <h2>Recent events</h2>
+  {% if events %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead><tr><th>Time</th><th>Type</th><th>Data</th></tr></thead>
+      <tbody>
+        {% for e in events|reverse %}
+        <tr>
+          <td>{{ e.created_at|datetimeformat }}</td>
+          <td>{{ e.event_type }}</td>
+          <td class="small muted">{{ e.event_data }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted small">No events.</p>
+  {% endif %}
+</section>
+
+<a class="btn btn-block" href="{{ url_for('admin.sessions') }}">BACK TO SESSIONS</a>
+{% endblock %}

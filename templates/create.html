@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{% if created %}Your game {{ game_session.session_code }}{% else %}Create a session{% endif %} - {{ app_name }}{% endblock %}
+{% block content %}
+
+{% if created %}
+  <section class="card center">
+    <h1>YOUR GAME</h1>
+    <p class="muted small">Share this code with everyone in your Starmaker room.</p>
+    <div class="code-display" id="code">{{ game_session.session_code }}</div>
+    <div class="spacer"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" data-copy="{{ game_session.session_code }}">COPY CODE</button>
+      <button class="btn" data-copy="{{ invite_url }}">COPY INVITE LINK</button>
+    </div>
+    <div class="spacer"></div>
+    <p class="muted small">Invite link:<br><span class="small" id="invite-url">{{ invite_url }}</span></p>
+    <div class="spacer"></div>
+    <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('host.dashboard', session_code=game_session.session_code) }}">
+      GO TO HOST DASHBOARD
+    </a>
+    <p class="muted small" style="margin-top:10px;">
+      Keep this browser open - your host access is stored on this device.
+      Players join at the invite link.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Waiting for players</h2>
+    <p class="muted small">Players who join will appear on the host dashboard. You can
+      start the first round whenever you are ready.</p>
+  </section>
+{% else %}
+  <section class="card">
+    <h1>CREATE SESSION</h1>
+    <p class="muted small">One session holds many rounds. Everyone joins once with the
+      same code - no new invite needed between rounds.</p>
+    <form method="post" autocomplete="off">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field">
+        <label for="host_name">Your name</label>
+        <input type="text" id="host_name" name="host_name" maxlength="32"
+               placeholder="e.g. Somil" required autofocus>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">CREATE SESSION</button>
+    </form>
+  </section>
+{% endif %}
+
+{% endblock %}

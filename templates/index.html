@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }} - Play Codenames with your Starmaker room{% endblock %}
+{% block content %}
+  <section class="card center">
+    <h1>CODENAMES <span style="color:var(--red)">LIVE</span></h1>
+    <p class="muted">Play together on Starmaker. This site is just the board -
+      talk, give clues and guess in your Starmaker voice room.</p>
+    <div class="spacer"></div>
+    <div class="stack">
+      <a class="btn btn-primary btn-lg btn-block" href="{{ url_for('main.create') }}">CREATE GAME</a>
+      <a class="btn btn-lg btn-block" href="#join">JOIN GAME</a>
+    </div>
+  </section>
+
+  <section class="card" id="join">
+    <h2>Join a game</h2>
+    <p class="muted small">Enter the 5-character game code your host shared with you.</p>
+    <form method="get" action="" id="join-form" autocomplete="off">
+      <div class="field">
+        <label for="code-input">Game code</label>
+        <input type="text" id="code-input" name="code" maxlength="6"
+               placeholder="X7K9P" autocapitalize="characters" autocomplete="off" required
+               style="text-transform:uppercase;letter-spacing:0.3rem;text-align:center;font-weight:700;">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">CONTINUE</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>How it works</h2>
+    <ol class="muted small" style="padding-left:18px;margin:0;">
+      <li>Host creates a session and shares the game code.</li>
+      <li>Everyone joins the same room on Starmaker and opens this site.</li>
+      <li>The host starts a round - captains see the secret key.</li>
+      <li>Discuss clues by voice, then submit guesses here.</li>
+      <li>The host reveals or rejects guesses. Play many rounds with one invite.</li>
+    </ol>
+    <div class="spacer"></div>
+    <a class="btn btn-sm btn-ghost" href="{{ url_for('main.rules') }}">Read the full rules</a>
+  </section>
+
+  <div class="ad-slot">
+    {% include "partials/adsense.html" with context %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var form = document.getElementById("join-form");
+    form.addEventListener("submit", function (e) {
+      var code = document.getElementById("code-input").value.trim().toUpperCase();
+      e.preventDefault();
+      if (!code) return;
+      window.location.href = "/join/" + encodeURIComponent(code);
+    });
+  })();
+</script>
+{% endblock %}

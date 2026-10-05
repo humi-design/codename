@@ -1,0 +1,53 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Settings - Admin{% endblock %}
+{% block admin_content %}
+
+<section class="card">
+  <h2>Global settings</h2>
+  <p class="muted small">Defaults applied when a host creates a round, plus feature flags.</p>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="default_board_size">Default board size</label>
+        <select id="default_board_size" name="default_board_size">
+          <option value="5" {{ 'selected' if settings.default_board_size == '5' else '' }}>5 &times; 5</option>
+          <option value="6" {{ 'selected' if settings.default_board_size == '6' else '' }}>6 &times; 6</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="default_timer_duration">Default timer (seconds)</label>
+        <input type="number" id="default_timer_duration" name="default_timer_duration"
+               value="{{ settings.default_timer_duration }}" min="10" max="3600">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="default_word_mode">Default difficulty</label>
+      <select id="default_word_mode" name="default_word_mode">
+        {% for mode in ['EASY', 'NORMAL', 'HARD', 'CHAOS'] %}
+        <option value="{{ mode }}" {{ 'selected' if settings.default_word_mode == mode else '' }}>{{ mode }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <h3>Feature flags</h3>
+    <div class="field">
+      <label><input type="checkbox" name="feature_spectator_mode" value="1"
+        {{ 'checked' if settings.feature_spectator_mode == '1' else '' }}> Enable spectator mode</label>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" name="feature_custom_word_list" value="1"
+        {{ 'checked' if settings.feature_custom_word_list == '1' else '' }}> Enable custom word lists</label>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" name="app_maintenance" value="1"
+        {{ 'checked' if settings.app_maintenance == '1' else '' }}> Maintenance mode banner</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block btn-lg">SAVE SETTINGS</button>
+  </form>
+</section>
+
+{% endblock %}

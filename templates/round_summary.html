@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Round {{ summary.round_number }} summary - {{ game_session.session_code }}{% endblock %}
+{% block content %}
+
+<section class="card">
+  <h1>ROUND {{ summary.round_number }} OVER</h1>
+  {% if summary.winner %}
+  <div class="winner-banner {{ summary.winner|lower }}">
+    <div class="big">{{ summary.winner }} WINS</div>
+  </div>
+  {% else %}
+  <div class="winner-banner">
+    <div class="big">ROUND ENDED</div>
+    <p class="muted small">No winner was recorded.</p>
+  </div>
+  {% endif %}
+
+  <div class="scorebar">
+    <div class="score red">
+      <div class="label">&#128308; RED FOUND</div>
+      <div class="value">{{ summary.red_found }} / {{ summary.red_total }}</div>
+    </div>
+    <div class="score blue">
+      <div class="label">&#128309; BLUE FOUND</div>
+      <div class="value">{{ summary.blue_found }} / {{ summary.blue_total }}</div>
+    </div>
+  </div>
+
+  <p class="muted small">
+    Captain: {{ summary.captain_name or '-' }}<br>
+    Started: {{ summary.started_at|datetimeformat }}<br>
+    Ended: {{ summary.ended_at|datetimeformat }}
+  </p>
+
+  <div class="btn-row">
+    {% if is_host %}
+    <a class="btn btn-primary" href="{{ url_for('session.lobby', session_code=game_session.session_code) }}">
+      SET UP ROUND {{ next_round_number }}
+    </a>
+    {% else %}
+    <a class="btn btn-primary" href="{{ url_for('player.view', session_code=game_session.session_code) }}">
+      BACK TO GAME
+    </a>
+    {% endif %}
+    <a class="btn" href="{{ url_for('main.session_summary', session_code=game_session.session_code) }}">
+      SESSION SUMMARY
+    </a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Board</h2>
+  <div class="board" id="board" data-size="{{ round_obj.board_size }}"></div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.ROUND_BOARD = {
+    cards: [
+      {% for c in round_obj.cards %}
+      { id: {{ c.id }}, word: {{ c.word|tojson }}, revealed: {{ 'true' if c.is_revealed else 'false' }},
+        revealed_type: {{ (c.card_type if c.is_revealed else None)|tojson }},
+        card_type: {{ c.card_type|tojson }} }
+      {{ ',' if not loop.last }}
+      {% endfor %}
+    ]
+  };
+</script>
+<script src="{{ url_for('static', filename='js/board.js') }}"></script>
+<script>
+  CL.renderBoard(document.getElementById("board"), window.ROUND_BOARD.cards,
+    { showKey: true, interactive: false });
+</script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Lobby {{ game_session.session_code }} - {{ app_name }}{% endblock %}
+{% block content %}
+
+<section class="card">
+  <div class="row-between">
+    <div>
+      <h1 style="margin:0;">SESSION</h1>
+      <div class="code-display" style="font-size:1.6rem;padding:8px 12px;letter-spacing:0.3rem;">
+        {{ game_session.session_code }}
+      </div>
+    </div>
+    <div class="center">
+      <span class="pill {{ 'active' if game_session.status == 'ACTIVE' else 'ended' }}">
+        {{ game_session.status }}
+      </span>
+      <div class="spacer"></div>
+      <button class="btn btn-sm" data-copy="{{ url_for('session.join', session_code=game_session.session_code, _external=True) }}">COPY INVITE</button>
+    </div>
+  </div>
+</section>
+
+<div class="two-col">
+  <div>
+    <section class="card">
+      <h2>Players ({{ game_session.players|length }})</h2>
+      <ul class="player-list" id="player-list">
+        {% for p in game_session.players %}
+        <li data-player-id="{{ p.id }}">
+          <span class="{{ 'dot-on' if p.is_connected else 'dot-off' }}">&#9679;</span>
+          <span class="pname">{{ p.display_name }}</span>
+          {% if p.is_host %}<span class="tag host">HOST</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    {% if round_obj and round_obj.status != 'SETUP' %}
+    <section class="card">
+      <h2>Round {{ round_obj.round_number }} in progress</h2>
+      <p class="muted small">The round has started. Go to your game view to play.</p>
+      <div class="btn-row">
+        {% if is_host %}
+        <a class="btn btn-primary" href="{{ url_for('host.dashboard', session_code=game_session.session_code) }}">HOST DASHBOARD</a>
+        {% endif %}
+        <a class="btn" href="{{ url_for('player.view', session_code=game_session.session_code) }}">MY GAME VIEW</a>
+      </div>
+    </section>
+    {% endif %}
+  </div>
+
+  <div>
+    {% if is_host %}
+    <section class="card" id="setup-card">
+      <h2>{% if round_obj and round_obj.status == 'SETUP' %}Round {{ round_obj.round_number }} setup{% else %}Start a round{% endif %}</h2>
+      <p class="muted small">Assign teams, pick a captain and options, then start.</p>
+
+      <h3 style="margin-top:12px;">Teams</h3>
+      <p class="muted small">Tap a team button next to each player.</p>
+      <ul class="player-list" id="assign-list">
+        {% for p in game_session.players %}
+        <li data-player-id="{{ p.id }}" data-player-name="{{ p.display_name }}">
+          <span class="pname">{{ p.display_name }}</span>
+          <button type="button" class="btn btn-sm team-btn" data-team="RED">RED</button>
+          <button type="button" class="btn btn-sm team-btn" data-team="BLUE">BLUE</button>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <div class="field" style="margin-top:12px;">
+        <label for="captain-select">Captain</label>
+        <select id="captain-select"></select>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="board-size">Board size</label>
+          <select id="board-size">
+            <option value="5">5 &times; 5 (25 cards)</option>
+            <option value="6">6 &times; 6 (36 cards)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="word-mode">Difficulty</label>
+          <select id="word-mode">
+            <option value="EASY">Easy</option>
+            <option value="NORMAL" selected>Normal</option>
+            <option value="HARD">Hard</option>
+            <option value="CHAOS">Chaos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="timer-duration">Timer</label>
+        <select id="timer-duration">
+          <option value="30">30 seconds</option>
+          <option value="60">1 minute</option>
+          <option value="120">2 minutes</option>
+          <option value="180" selected>3 minutes</option>
+          <option value="300">5 minutes</option>
+          <option value="custom">Custom&hellip;</option>
+        </select>
+      </div>
+      <div class="field hidden" id="custom-timer-field">
+        <label for="custom-timer">Custom seconds (10-3600)</label>
+        <input type="number" id="custom-timer" min="10" max="3600" value="180">
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" id="start-round-btn">START ROUND</button>
+      <p class="muted small" style="margin-top:8px;">A new board is generated for every round.
+        Players stay in this session - the code never changes.</p>
+    </section>
+
+    <section class="card">
+      <h2>Session</h2>
+      <button class="btn btn-danger btn-block" id="end-session-btn">END SESSION</button>
+      <p class="muted small" style="margin-top:8px;">Ending the session disables the invite
+        for everyone and stops future rounds. History is kept.</p>
+    </section>
+    {% else %}
+    <section class="card center">
+      <h2>Waiting for host</h2>
+      <p class="muted">You are in. The host will assign teams and start the round.</p>
+      <p class="small muted">Keep this page open. It updates automatically.</p>
+    </section>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.LOBBY = {
+    sessionCode: "{{ game_session.session_code }}",
+    isHost: {{ 'true' if is_host else 'false' }},
+    hostToken: {{ (host_token or '')|tojson }},
+    playerToken: {{ (player_token or '')|tojson }},
+    pollUrl: "{{ url_for('player.state_api', session_code=game_session.session_code) if player else '' }}",
+    roundId: {{ round_obj.id if round_obj and round_obj.status == 'SETUP' else 'null' }},
+    hostDashboardUrl: "{{ url_for('host.dashboard', session_code=game_session.session_code) }}",
+    summaryUrl: "{{ url_for('main.session_summary', session_code=game_session.session_code) }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='js/lobby.js') }}"></script>
+{% endblock %}
