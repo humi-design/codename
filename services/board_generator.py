@@ -18,7 +18,7 @@ import random
 from extensions import db
 from models.constants import BOARD_DISTRIBUTIONS, CardType
 from models.round_card import RoundCard
-from services.word_engine import WordEngine
+from services.word_engine import WordEngine, WordEngineError
 
 
 class BoardConfigError(ValueError):
@@ -65,11 +65,17 @@ class BoardGenerator:
         board_size: int = 5,
         mode: str = "NORMAL",
         distribution: dict[str, int] | None = None,
+        *,
+        filters: dict | None = None,
+        categories=None,
+        exclude: set[str] | None = None,
     ) -> list[RoundCard]:
         """Create and persist the board for ``round_id``.
 
         Idempotent: if cards already exist for the round they are returned
-        unchanged, so a page refresh can never regenerate the board.
+        unchanged, so a page refresh can never regenerate the board.  Words are
+        drawn from the local ``words`` table via :class:`WordEngine` - never
+        from an external source.
         """
         existing = RoundCard.query.filter_by(round_id=round_id).order_by(
             RoundCard.position
@@ -78,7 +84,13 @@ class BoardGenerator:
             return existing
 
         total_cards = board_size * board_size
-        words = WordEngine.pick_words(total_cards, mode=mode)
+        try:
+            words = WordEngine.pick_words(
+                total_cards, mode=mode, filters=filters, categories=categories,
+                exclude=exclude,
+            )
+        except WordEngineError as exc:
+            raise BoardConfigError(str(exc)) from exc
 
         # Defensive duplicate check.
         if len(set(words)) != len(words):

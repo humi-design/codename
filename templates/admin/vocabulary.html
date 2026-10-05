@@ -1,0 +1,222 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Vocabulary - Admin{% endblock %}
+{% block admin_content %}
+
+{% set badge = {'NOT_INITIALIZED': 'offline', 'IMPORTING': 'warning', 'READY': 'success', 'UPDATE_AVAILABLE': 'info', 'ERROR': 'error'} %}
+
+<section class="card">
+  <div class="row-between">
+    <h2 style="margin:0;">Vocabulary database</h2>
+    <span class="badge {{ badge.get(vocab.status, '') }}">{{ vocab.status }}</span>
+  </div>
+  <p class="muted small">
+    External datasets populate this table once. The game always reads vocabulary
+    from here &mdash; never from a live external API.
+  </p>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="num">{{ '{:,}'.format(stats.total) }}</div><div class="lbl">Total entries</div></div>
+    <div class="stat"><div class="num">{{ '{:,}'.format(stats.active) }}</div><div class="lbl">Active</div></div>
+    <div class="stat"><div class="num">{{ '{:,}'.format(stats.inactive) }}</div><div class="lbl">Inactive</div></div>
+    <div class="stat"><div class="num">{{ '{:,}'.format(stats.proper_nouns) }}</div><div class="lbl">Proper nouns</div></div>
+    <div class="stat"><div class="num">{{ '{:,}'.format(stats.multiword) }}</div><div class="lbl">Multi-word</div></div>
+  </div>
+
+  <p class="muted small">
+    Last import:
+    {% if last_import %}
+      <strong>{{ last_import.status }}</strong> &middot; {{ last_import.source }}
+      &middot; {{ last_import.completed_at or last_import.started_at or last_import.created_at }}
+    {% else %}
+      never
+    {% endif %}
+  </p>
+</section>
+
+{% if running %}
+<section class="card" id="import-progress">
+  <h2>Import in progress</h2>
+  <p class="muted small" id="import-line">
+    Source: <strong id="imp-source">{{ running.source }}</strong>
+    &middot; Status: <strong id="imp-status">{{ running.status }}</strong>
+  </p>
+  <div class="progress"><div class="progress-bar" id="imp-bar" style="width:0%"></div></div>
+  <table class="data">
+    <tbody>
+      <tr><th>Processed</th><td id="imp-processed">{{ running.total_processed }}</td></tr>
+      <tr><th>Imported</th><td id="imp-imported">{{ running.total_imported }}</td></tr>
+      <tr><th>Updated</th><td id="imp-updated">{{ running.total_updated }}</td></tr>
+      <tr><th>Duplicates</th><td id="imp-duplicates">{{ running.total_duplicates }}</td></tr>
+      <tr><th>Rejected</th><td id="imp-rejected">{{ running.total_rejected }}</td></tr>
+      <tr><th>Errors</th><td id="imp-errors">{{ running.total_errors }}</td></tr>
+    </tbody>
+  </table>
+  <form method="post" action="{{ url_for('admin.vocabulary_cancel', import_id=running.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-sm btn-danger" type="submit">CANCEL IMPORT</button>
+  </form>
+</section>
+{% endif %}
+
+<section class="card">
+  <h2>Actions</h2>
+  <p class="muted small">Dataset directory: <code>{{ dataset_dir }}</code></p>
+
+  <form method="post" action="{{ url_for('admin.vocabulary_import') }}" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="grid-2">
+      <div class="field">
+        <label for="source">Source</label>
+        <select id="source" name="source">
+          <option value="kaikki">Wiktionary / Kaikki</option>
+          <option value="wikidata">Wikidata</option>
+          <option value="frequency">Frequency list</option>
+          <option value="custom">Custom file in dataset dir</option>
+          <option value="seed">Bundled sample</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="mode">Mode</label>
+        <select id="mode" name="mode">
+          <option value="initial">Initial import</option>
+          <option value="update">Update</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit"
+      {% if running %}disabled{% endif %}>START IMPORT</button>
+  </form>
+
+  <hr>
+
+  <form method="post" action="{{ url_for('admin.vocabulary_upload') }}"
+        enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="file">Upload CSV / TXT / JSONL</label>
+      <input type="file" id="file" name="file" accept=".csv,.txt,.jsonl,.json,.tsv">
+    </div>
+    <button class="btn" type="submit" {% if running %}disabled{% endif %}>UPLOAD &amp; IMPORT</button>
+  </form>
+
+  <div class="btn-row" style="margin-top:12px;">
+    <a class="btn btn-sm" href="{{ url_for('admin.vocabulary_imports') }}">IMPORT HISTORY</a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Board word filters</h2>
+  <p class="muted small">Applied when a board is generated. Defaults keep unusual but
+    legitimate vocabulary (science, technical, names, rare words).</p>
+  <form method="post" action="{{ url_for('admin.vocabulary_filters') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="grid-2">
+      <div class="field">
+        <label for="vocab_max_chars">Maximum characters</label>
+        <input type="number" id="vocab_max_chars" name="vocab_max_chars" min="2" max="64"
+               value="{{ settings.vocab_max_chars }}">
+      </div>
+      <div class="field">
+        <label for="vocab_max_words">Maximum words per entry</label>
+        <input type="number" id="vocab_max_words" name="vocab_max_words" min="1" max="6"
+               value="{{ settings.vocab_max_words }}">
+      </div>
+      <div class="field">
+        <label for="vocab_min_frequency">Minimum frequency score (0-100)</label>
+        <input type="number" id="vocab_min_frequency" name="vocab_min_frequency" min="0" max="100"
+               value="{{ settings.vocab_min_frequency }}">
+      </div>
+      <div class="field">
+        <label for="vocab_language">Default language</label>
+        <input type="text" id="vocab_language" name="vocab_language" maxlength="8"
+               value="{{ settings.vocab_language }}">
+      </div>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" name="vocab_allow_proper_nouns" value="1"
+        {{ 'checked' if settings.vocab_allow_proper_nouns == '1' else '' }}>
+        Allow proper nouns (names, places, brands)</label>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" name="vocab_allow_multiword" value="1"
+        {{ 'checked' if settings.vocab_allow_multiword == '1' else '' }}>
+        Allow multi-word entries (NEW YORK, BLACK HOLE)</label>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">SAVE FILTERS</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Statistics</h2>
+  <div class="grid-2">
+    <div>
+      <h3>Categories</h3>
+      <table class="data">
+        <tbody>
+        {% for name, value in stats.categories.items() %}
+          <tr><th>{{ name }}</th><td>{{ '{:,}'.format(value) }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Difficulties</h3>
+      <table class="data">
+        <tbody>
+        {% for name, value in stats.difficulties.items() %}
+          <tr><th>{{ name }}</th><td>{{ '{:,}'.format(value) }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <h3>Languages</h3>
+      <table class="data">
+        <tbody>
+        {% for name, value in stats.languages.items() %}
+          <tr><th>{{ name }}</th><td>{{ '{:,}'.format(value) }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <h3>Sources</h3>
+      <table class="data">
+        <tbody>
+        {% for name, value in stats.sources.items() %}
+          <tr><th>{{ name }}</th><td>{{ '{:,}'.format(value) }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Sources &amp; licenses</h2>
+  <p class="muted small">Only official downloadable datasets or operator-provided files
+    are used. Check each license before redistribution.</p>
+  <div class="table-scroll">
+    <table class="data">
+      <thead><tr><th>Source</th><th>Kind</th><th>License</th><th>Entries</th><th>Last import</th></tr></thead>
+      <tbody>
+      {% for s in sources %}
+        <tr>
+          <td>
+            {% if s.homepage_url %}<a href="{{ s.homepage_url }}" target="_blank" rel="noopener">{{ s.name }}</a>{% else %}{{ s.name }}{% endif %}
+          </td>
+          <td>{{ s.kind }}</td>
+          <td>
+            {% if s.license_url %}<a href="{{ s.license_url }}" target="_blank" rel="noopener">{{ s.license_name or 'link' }}</a>{% else %}{{ s.license_name or '-' }}{% endif %}
+          </td>
+          <td>{{ '{:,}'.format(s.word_count or 0) }}</td>
+          <td>{{ s.last_imported_at or '-' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>CL.adminVocabulary("{{ url_for('admin.vocabulary_status') }}");</script>
+{% endblock %}

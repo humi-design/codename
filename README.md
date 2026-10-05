@@ -132,37 +132,85 @@ database and creates every table.
 
 ---
 
-## 5. Word engine and vocabulary
+## 5. Large-scale vocabulary engine
 
-The game reads words from the `words` table. Import more words whenever you
-like - no external API is called at game time.
+The game reads words from the MySQL `words` table. The table is the single
+source of vocabulary; no external API is ever called at game time. Populate it
+once (and refresh it periodically) from large public datasets.
 
-Supported input formats:
+### Ingestion pipeline
 
-* `.txt` - one word per line
-* `.csv` - one word per line, or a header row with
-  `word,category,difficulty,part_of_speech,is_proper_noun,definition`
-* `.jsonl` - Kaikki / Wiktextract style, one JSON object per line
-
-Examples:
-
-```bash
-# Rich CSV with categories and difficulty
-python scripts/import_words.py data/sample_words.csv --source seed
-
-# Replace the previous import from the same source
-python scripts/import_words.py data/sample_words.csv --source seed --mode replace
-
-# Large Kaikki dump (first 20000 usable entries)
-python scripts/import_words.py kaikki-english.jsonl --source kaikki --limit 20000
+```
+providers -> cleaner -> classifier -> importer -> words table
 ```
 
-Word modes: `EASY`, `NORMAL`, `HARD`, `CHAOS`. The host picks the mode when
-starting a round.
+* `services/vocabulary/cleaner.py` - normalises Unicode/whitespace/case and
+  rejects URLs, HTML, templates, sentences and metadata fragments. It keeps
+  scientific, technical, medical, historical, place, brand and rare words.
+* `services/vocabulary/classifier.py` - infers category, difficulty and
+  frequency score, and detects proper nouns.
+* `services/vocabulary/importer.py` - streams entries one line at a time and
+  upserts them in batches. Nothing is loaded wholesale into memory.
+* `services/word_engine.py` - the only gameplay reader. It samples random
+  primary keys, so selection stays fast on tables with millions of rows and
+  never uses `ORDER BY RAND()`.
 
-Import cleaning removes URLs, HTML, markup fragments, very long strings,
-duplicates and metadata. It keeps scientific terms, technical words, names,
-places and rare words on purpose.
+### Supported sources
+
+| Source | Provider | License |
+|--------|----------|---------|
+| Wiktionary / Wiktextract (Kaikki) | `kaikki_provider.py` | CC BY-SA 4.0 |
+| Wikidata entities | `wikidata_provider.py` | CC0 1.0 |
+| Frequency lists | `frequency_provider.py` | dataset-specific |
+| Custom CSV / TXT | `custom_file_provider.py` | operator-provided |
+
+Downloadable dataset files go in `data/datasets/` (see
+`data/datasets/README.md`). Import them from the Super Admin **Vocabulary**
+page or with the CLI.
+
+### CLI
+
+```bash
+# Bundled sample (first run / development)
+python scripts/import_words.py --source seed
+
+# A downloaded dataset, auto-detected in data/datasets/
+python scripts/import_words.py --source kaikki
+python scripts/import_words.py --source wikidata
+python scripts/import_words.py --source frequency
+
+# An explicit file
+python scripts/import_words.py data/sample_words.csv --source custom
+
+# Rebuild one source from scratch
+python scripts/import_words.py --source custom --file words.csv --mode replace
+
+# Resume an interrupted large import from its byte offset
+python scripts/import_words.py --source kaikki --resume-offset 12345678
+
+# Download then import (explicit, one-off)
+python scripts/import_words.py --source kaikki --download
+```
+
+Imports are resumable and cancellable. A failed import never deletes existing
+vocabulary.
+
+### Super Admin vocabulary page
+
+`/admin/vocabulary` provides: live database statistics, one-click imports per
+source, CSV/TXT/JSONL upload, import history with cancel/retry, and
+word-quality filters (max characters, max words, minimum frequency, allow
+proper nouns, allow multi-word entries).
+
+### Word modes
+
+`EASY`, `NORMAL`, `HARD`, `CHAOS`. CHAOS spans every difficulty bucket so it
+mixes common, technical, proper-noun and rare vocabulary. The host picks the
+mode when starting a round.
+
+The bundled `data/sample_words.csv` (259 words) keeps a fresh install playable.
+Real deployments import a Wiktionary/Wikidata dump for tens of thousands to
+millions of words.
 
 ---
 
@@ -247,7 +295,9 @@ python -m pytest tests/ -q
 ```
 
 The suite covers session lifecycle, round and board generation, game rules,
-the timer, and security (hidden cards, authorization, session isolation).
+the timer, security (hidden cards, authorization, session isolation), and the
+vocabulary engine (cleaning, classification, providers, dedupe, import
+management, admin pages).
 
 Two end-to-end scripts drive a running server:
 
@@ -358,11 +408,12 @@ codename/
 ├── routes/                # HTTP blueprints (main, session, player, captain, host, admin)
 ├── sockets/               # Socket.IO handlers
 ├── services/              # game logic (board, game manager, timer, serializers, ...)
+│   └── vocabulary/        # ingestion engine (cleaner, classifier, providers, importer)
 ├── templates/             # Jinja2 templates
 ├── static/                # CSS and vanilla JS
 ├── scripts/               # init_db.py, import_words.py
 ├── migrations/            # Alembic migrations
-├── data/                  # sample_words.csv
+├── data/                  # sample_words.csv, datasets/ (large dumps, git-ignored)
 └── tests/                 # pytest suite + e2e scripts
 ```
 

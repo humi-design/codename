@@ -20,6 +20,11 @@ env/
 *.sql
 *.sqlite3
 
+# Large downloaded vocabulary datasets (kept out of version control).
+# The directory and its README are tracked; the multi-GB dumps are not.
+data/datasets/*
+!data/datasets/README.md
+
 # OS / editor
 .DS_Store
 .idea/

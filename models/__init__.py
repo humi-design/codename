@@ -4,13 +4,16 @@ from models.app_setting import AppSetting
 from models.constants import (
     BOARD_DISTRIBUTIONS,
     CardType,
+    Category,
     EventType,
     GuessStatus,
+    ImportStatus,
     Role,
     RoundStatus,
     SessionStatus,
     Team,
     UserRole,
+    VocabularyStatus,
     WordMode,
 )
 from models.game_session import GameSession
@@ -21,6 +24,8 @@ from models.round_player import RoundPlayer
 from models.session_event import SessionEvent
 from models.session_player import SessionPlayer
 from models.user import User
+from models.vocabulary_import import VocabularyImport
+from models.vocabulary_source import VocabularySource
 from models.word import Word
 
 __all__ = [
@@ -33,15 +38,20 @@ __all__ = [
     "SessionEvent",
     "SessionPlayer",
     "User",
+    "VocabularyImport",
+    "VocabularySource",
     "Word",
     "BOARD_DISTRIBUTIONS",
     "CardType",
+    "Category",
     "EventType",
     "GuessStatus",
+    "ImportStatus",
     "Role",
     "RoundStatus",
     "SessionStatus",
     "Team",
     "UserRole",
+    "VocabularyStatus",
     "WordMode",
 ]

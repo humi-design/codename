@@ -90,6 +90,66 @@ class WordMode:
 
     ALL = (EASY, NORMAL, HARD, CHAOS, CUSTOM)
 
+    # Board-selectable modes (CUSTOM is only used by host-provided lists).
+    SELECTABLE = (EASY, NORMAL, HARD, CHAOS)
+
+
+class Category:
+    """Vocabulary categories.  Unknown values fall back to ``OTHER``."""
+
+    COMMON = "COMMON"
+    SCIENCE = "SCIENCE"
+    TECHNOLOGY = "TECHNOLOGY"
+    HISTORY = "HISTORY"
+    GEOGRAPHY = "GEOGRAPHY"
+    PERSON = "PERSON"
+    PLACE = "PLACE"
+    ANIMAL = "ANIMAL"
+    OBJECT = "OBJECT"
+    FOOD = "FOOD"
+    BRAND = "BRAND"
+    SPORT = "SPORT"
+    PROFESSION = "PROFESSION"
+    ORGANIZATION = "ORGANIZATION"
+    CONCEPT = "CONCEPT"
+    MEDICAL = "MEDICAL"
+    ENGINEERING = "ENGINEERING"
+    COMPUTER = "COMPUTER"
+    BUSINESS = "BUSINESS"
+    RARE = "RARE"
+    OTHER = "OTHER"
+
+    ALL = (
+        COMMON, SCIENCE, TECHNOLOGY, HISTORY, GEOGRAPHY, PERSON, PLACE,
+        ANIMAL, OBJECT, FOOD, BRAND, SPORT, PROFESSION, ORGANIZATION,
+        CONCEPT, MEDICAL, ENGINEERING, COMPUTER, BUSINESS, RARE, OTHER,
+    )
+
+
+class VocabularyStatus:
+    """Lifecycle status of the vocabulary database."""
+
+    NOT_INITIALIZED = "NOT_INITIALIZED"
+    IMPORTING = "IMPORTING"
+    READY = "READY"
+    UPDATE_AVAILABLE = "UPDATE_AVAILABLE"
+    ERROR = "ERROR"
+
+    ALL = (NOT_INITIALIZED, IMPORTING, READY, UPDATE_AVAILABLE, ERROR)
+
+
+class ImportStatus:
+    """Status of a single vocabulary import run."""
+
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+
+    ALL = (QUEUED, RUNNING, COMPLETED, FAILED, CANCELLED)
+    TERMINAL = (COMPLETED, FAILED, CANCELLED)
+
 
 class UserRole:
     SUPER_ADMIN = "super_admin"
