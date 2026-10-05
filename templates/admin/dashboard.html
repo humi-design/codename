@@ -1,0 +1,57 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin dashboard - {{ app_name }}{% endblock %}
+{% block admin_content %}
+
+<div class="stat-grid">
+  <div class="stat"><div class="num">{{ stats.active_sessions }}</div><div class="lbl">Active sessions</div></div>
+  <div class="stat"><div class="num">{{ stats.total_sessions }}</div><div class="lbl">Total sessions</div></div>
+  <div class="stat"><div class="num">{{ stats.players_today }}</div><div class="lbl">Players today</div></div>
+  <div class="stat"><div class="num">{{ stats.rounds_today }}</div><div class="lbl">Rounds today</div></div>
+  <div class="stat"><div class="num">{{ stats.total_players }}</div><div class="lbl">Total players</div></div>
+  <div class="stat"><div class="num">{{ stats.total_rounds }}</div><div class="lbl">Total rounds</div></div>
+</div>
+
+<section class="card">
+  <h2>Active sessions</h2>
+  {% if active_sessions %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead><tr><th>Code</th><th>Host</th><th>Players</th><th>Round</th><th>Created</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for s in active_sessions %}
+        <tr>
+          <td><strong>{{ s.session_code }}</strong></td>
+          <td>{{ s.host_name }}</td>
+          <td>{{ s.players|length }}</td>
+          <td>{{ s.rounds|length }}</td>
+          <td>{{ s.created_at|datetimeformat }}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('admin.session_detail', session_id=s.id) }}">View</a>
+            <form method="post" action="{{ url_for('admin.terminate_session', session_id=s.id) }}"
+                  style="display:inline;" onsubmit="return confirm('Terminate this session?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">Terminate</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted small">No active sessions right now.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Application health</h2>
+  <p class="muted small">Live check: <span id="health-status">checking&hellip;</span></p>
+  <button class="btn btn-sm" id="health-refresh">REFRESH</button>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>CL.adminHealth("{{ url_for('admin.health') }}");</script>
+{% endblock %}

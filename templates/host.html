@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Host - {{ game_session.session_code }}{% endblock %}
+{% block content %}
+
+<section class="card tight">
+  <div class="row-between">
+    <div>
+      <span class="pill">SESSION {{ game_session.session_code }}</span>
+      <span id="round-label" class="pill">ROUND {{ state.round.round_number if state.round else '-' }}</span>
+      <span class="pill {{ 'active' if game_session.status == 'ACTIVE' else 'ended' }}">{{ game_session.status }}</span>
+    </div>
+    <button class="btn btn-sm" data-copy="{{ url_for('session.join', session_code=game_session.session_code, _external=True) }}">COPY INVITE</button>
+  </div>
+  <div class="spacer"></div>
+  <div class="statusbar">
+    <span id="turn-indicator" class="turn-indicator {{ (state.round.current_team|lower) if state.round else 'red' }}">
+      {{ state.round.current_team if state.round else 'RED' }} TEAM'S TURN
+    </span>
+    <span class="timer" id="timer">--:--</span>
+  </div>
+</section>
+
+<section class="scorebar">
+  <div class="score red">
+    <div class="label">&#128308; RED REMAINING</div>
+    <div class="value" id="score-red">{{ state.round.scores.red if state.round else '-' }}</div>
+  </div>
+  <div class="score blue">
+    <div class="label">&#128309; BLUE REMAINING</div>
+    <div class="value" id="score-blue">{{ state.round.scores.blue if state.round else '-' }}</div>
+  </div>
+</section>
+
+<div class="two-col">
+  <div>
+    <section class="card tight">
+      <h3>Board <span class="muted small">(tap a card to reveal)</span></h3>
+      <div class="board" id="board" data-size="{{ state.round.board_size if state.round else 5 }}"></div>
+      <div class="legend" style="margin-top:8px;">
+        <span class="item"><span class="swatch red"></span> Red</span>
+        <span class="item"><span class="swatch blue"></span> Blue</span>
+        <span class="item"><span class="swatch neutral"></span> Bystander</span>
+        <span class="item"><span class="swatch assassin"></span> Assassin</span>
+      </div>
+    </section>
+
+    <section class="card tight">
+      <h3>Pending guesses</h3>
+      <div id="pending-guesses">
+        <p class="muted small">No pending guesses.</p>
+      </div>
+    </section>
+  </div>
+
+  <div>
+    <section class="card tight">
+      <h3>Timer controls</h3>
+      <div class="btn-row">
+        <button class="btn btn-success" id="timer-start">START</button>
+        <button class="btn" id="timer-pause">PAUSE</button>
+        <button class="btn" id="timer-resume">RESUME</button>
+        <button class="btn" id="timer-reset">RESET</button>
+      </div>
+    </section>
+
+    <section class="card tight">
+      <h3>Turn &amp; round</h3>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="switch-turn">SWITCH TURN</button>
+        <button class="btn btn-danger" id="end-round">END ROUND</button>
+      </div>
+    </section>
+
+    <section class="card tight" id="round-actions">
+      <h3>Next round</h3>
+      <p class="muted small">Round ended? Configure the next one in the lobby.</p>
+      <a class="btn btn-primary btn-block" id="next-round-link"
+         href="{{ url_for('session.lobby', session_code=game_session.session_code) }}">SET UP NEXT ROUND</a>
+    </section>
+
+    <section class="card tight">
+      <h3>Session</h3>
+      <button class="btn btn-danger btn-block" id="end-session-btn">END SESSION</button>
+    </section>
+
+    <section class="card tight">
+      <h3>Players</h3>
+      <ul class="player-list" id="player-list">
+        {% for p in game_session.players %}
+        <li><span class="{{ 'dot-on' if p.is_connected else 'dot-off' }}">&#9679;</span>
+          <span class="pname">{{ p.display_name }}</span>
+          {% if p.is_host %}<span class="tag host">HOST</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block overlays %}
+<div class="overlay" id="confirm-overlay" hidden>
+  <div class="modal">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p class="muted small" id="confirm-body"></p>
+    <div class="btn-row">
+      <button class="btn btn-danger" id="confirm-yes">CONFIRM</button>
+      <button class="btn" id="confirm-no">CANCEL</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.HOST = {
+    sessionCode: "{{ game_session.session_code }}",
+    hostToken: {{ host_token|tojson }},
+    initialState: {{ state|tojson }},
+    roundId: {{ state.round.id if state.round else 'null' }},
+    apiBase: "/api/host/{{ game_session.session_code }}",
+    lobbyUrl: "{{ url_for('session.lobby', session_code=game_session.session_code) }}",
+    summaryUrl: "{{ url_for('main.session_summary', session_code=game_session.session_code) }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='js/board.js') }}"></script>
+<script src="{{ url_for('static', filename='js/host.js') }}"></script>
+{% endblock %}

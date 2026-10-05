@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}How to play - {{ app_name }}{% endblock %}
+{% block content %}
+  <section class="card">
+    <h1>How to play</h1>
+    <p class="muted">Talk in your Starmaker room. Use this site only for the board.</p>
+
+    <h3>The idea</h3>
+    <p class="small">Two teams - <span style="color:var(--red)">Red</span> and
+      <span style="color:var(--blue)">Blue</span> - compete to find their own
+      words first. Each team has a captain who can see the secret key.</p>
+
+    <h3>Colours</h3>
+    <div class="legend">
+      <span class="item"><span class="swatch red"></span> Red team word</span>
+      <span class="item"><span class="swatch blue"></span> Blue team word</span>
+      <span class="item"><span class="swatch neutral"></span> Bystander (no team)</span>
+      <span class="item"><span class="swatch assassin"></span> Assassin (lose instantly)</span>
+    </div>
+
+    <h3>Turn flow</h3>
+    <ol class="small muted" style="padding-left:18px;">
+      <li>The captain gives a one-word clue and a number by voice.</li>
+      <li>Any player may submit a guess on the board.</li>
+      <li>The host reveals or rejects the guess.</li>
+      <li>A correct team word continues the turn. A wrong guess or bystander passes the turn.</li>
+      <li>Finding the assassin ends the round - the other team wins.</li>
+      <li>The first team to find all of their words wins the round.</li>
+    </ol>
+
+    <h3>One session, many rounds</h3>
+    <p class="small muted">The same invite code works for the whole Starmaker session.
+      Teams, captain and board are set fresh for every round. Only the host can end the session.</p>
+
+    <a class="btn btn-primary btn-block" href="{{ url_for('main.index') }}">BACK TO HOME</a>
+  </section>
+{% endblock %}

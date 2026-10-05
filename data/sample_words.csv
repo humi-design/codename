@@ -1,0 +1,260 @@
+word,category,difficulty,part_of_speech,is_proper_noun,definition
+SYNAPSE,SCIENCE,HARD,noun,0,Junction between two nerve cells.
+AXOLOTL,ANIMAL,HARD,noun,0,A Mexican salamander that can regenerate limbs.
+QUASAR,SCIENCE,HARD,noun,0,An extremely luminous active galactic nucleus.
+MITOSIS,SCIENCE,HARD,noun,0,Cell division producing two identical cells.
+PARADOX,CONCEPT,HARD,noun,0,A self-contradictory statement.
+PLATYPUS,ANIMAL,HARD,noun,0,An egg-laying mammal of Australia.
+EINSTEIN,PERSON,CHAOS,proper noun,1,Theoretical physicist who developed relativity.
+MUMBAI,PLACE,NORMAL,proper noun,1,Capital city of Maharashtra, India.
+LINUX,COMPUTER,HARD,proper noun,1,An open source operating system kernel.
+MESSI,PERSON,CHAOS,proper noun,1,Argentine footballer.
+NAPOLEON,PERSON,HARD,proper noun,1,French emperor and military leader.
+ORBIT,SCIENCE,EASY,noun,0,The curved path of a body around a star.
+NEURON,SCIENCE,HARD,noun,0,A cell that transmits nerve impulses.
+VOLCANO,GEOGRAPHY,EASY,noun,0,A mountain that erupts lava.
+PYTHON,COMPUTER,EASY,noun,0,A large non-venomous snake; also a programming language.
+AMAZON,GEOGRAPHY,CHAOS,proper noun,1,A major river and rainforest; also a company.
+TITANIUM,SCIENCE,HARD,noun,0,A strong, light, corrosion-resistant metal.
+MERCURY,SCIENCE,NORMAL,noun,0,The smallest planet; also a metal.
+SATELLITE,TECHNOLOGY,NORMAL,noun,0,An object orbiting a planet.
+ALGORITHM,COMPUTER,HARD,noun,0,A step-by-step procedure for computation.
+COMPASS,OBJECT,EASY,noun,0,An instrument for finding direction.
+LANTERN,OBJECT,EASY,noun,0,A portable lamp with a protective case.
+GLACIER,GEOGRAPHY,NORMAL,noun,0,A slowly moving mass of ice.
+HARBOUR,PLACE,EASY,noun,0,A sheltered place where ships moor.
+MEADOW,PLACE,EASY,noun,0,A field of grass and flowers.
+CIRCUIT,TECHNOLOGY,NORMAL,noun,0,A closed path for electric current.
+FOSSIL,SCIENCE,NORMAL,noun,0,Preserved remains of ancient life.
+PHOTON,SCIENCE,HARD,noun,0,A particle of light.
+TUNDRA,GEOGRAPHY,HARD,noun,0,A cold, treeless biome.
+REACTOR,ENGINEERING,NORMAL,noun,0,A vessel for nuclear or chemical reactions.
+GRAVITY,SCIENCE,EASY,noun,0,The force that attracts masses.
+CANYON,GEOGRAPHY,EASY,noun,0,A deep gorge with steep sides.
+PENGUIN,ANIMAL,EASY,noun,0,A flightless seabird of the southern hemisphere.
+MAGNET,OBJECT,EASY,noun,0,An object that attracts iron.
+ECLIPSE,SCIENCE,NORMAL,noun,0,Obscuring of one celestial body by another.
+PIRATE,HISTORY,EASY,noun,0,A person who robs ships at sea.
+CATHEDRAL,PLACE,NORMAL,noun,0,A large and important church.
+VELOCITY,SCIENCE,NORMAL,noun,0,Speed in a given direction.
+MARMALADE,FOOD,EASY,noun,0,A fruit preserve made from citrus.
+OBSIDIAN,SCIENCE,HARD,noun,0,Volcanic glass formed by rapid cooling.
+NEBULA,SCIENCE,HARD,noun,0,A cloud of gas and dust in space.
+PENDULUM,OBJECT,NORMAL,noun,0,A weight suspended so it can swing.
+CORAL,ANIMAL,EASY,noun,0,A marine invertebrate forming reefs.
+AZTEC,HISTORY,HARD,proper noun,1,A Mesoamerican civilisation.
+SAMURAI,HISTORY,NORMAL,noun,0,A Japanese warrior class member.
+VIKING,HISTORY,EASY,noun,0,A Norse seafarer and raider.
+PYRAMID,PLACE,EASY,noun,0,A monumental structure with a square base.
+GALAXY,SCIENCE,EASY,noun,0,A system of stars and matter.
+MOLECULE,SCIENCE,NORMAL,noun,0,A group of bonded atoms.
+CHEETAH,ANIMAL,EASY,noun,0,The fastest land animal.
+AVALANCHE,GEOGRAPHY,NORMAL,noun,0,A mass of snow sliding down a mountain.
+LIGHTHOUSE,PLACE,EASY,noun,0,A tower with a light to guide ships.
+SANDSTORM,GEOGRAPHY,NORMAL,noun,0,A strong wind carrying sand.
+KILIMANJARO,PLACE,CHAOS,proper noun,1,The highest mountain in Africa.
+TOKYO,PLACE,EASY,proper noun,1,The capital of Japan.
+SAHARA,PLACE,NORMAL,proper noun,1,The largest hot desert.
+SHERLOCK,PERSON,CHAOS,proper noun,1,Fictional detective created by Arthur Conan Doyle.
+GANDHI,PERSON,HARD,proper noun,1,Leader of Indian independence.
+TESLA,PERSON,CHAOS,proper noun,1,Inventor and electrical engineer.
+CURIOSITY,CONCEPT,NORMAL,noun,0,A strong desire to know something.
+BAMBOO,OBJECT,EASY,noun,0,A tall fast-growing grass.
+CINNAMON,FOOD,EASY,noun,0,Aromatic spice from tree bark.
+PEPPER,FOOD,EASY,noun,0,A pungent spice or vegetable.
+VANILLA,FOOD,EASY,noun,0,A flavouring from orchid pods.
+WALNUT,FOOD,EASY,noun,0,An edible nut with a wrinkled shell.
+PISTACHIO,FOOD,NORMAL,noun,0,A green edible nut.
+QUANTUM,SCIENCE,HARD,noun,0,The smallest discrete quantity of a physical property.
+ISOTOPE,SCIENCE,HARD,noun,0,A variant of a chemical element.
+ENTROPY,SCIENCE,HARD,noun,0,A measure of disorder in a system.
+CATALYST,SCIENCE,NORMAL,noun,0,A substance that speeds a reaction.
+POLYMER,SCIENCE,NORMAL,noun,0,A large molecule of repeating units.
+ENZYME,MEDICAL,HARD,noun,0,A protein that catalyses reactions.
+VACCINE,MEDICAL,NORMAL,noun,0,A preparation giving immunity.
+ANTIBODY,MEDICAL,HARD,noun,0,A protein produced by the immune system.
+GENOME,SCIENCE,HARD,noun,0,The complete set of genes.
+PROTEIN,MEDICAL,EASY,noun,0,A chain of amino acids.
+CRATER,GEOGRAPHY,EASY,noun,0,A bowl-shaped depression.
+METEOR,SCIENCE,EASY,noun,0,A space rock burning in the atmosphere.
+COMET,SCIENCE,EASY,noun,0,An icy body with a glowing tail.
+ASTEROID,SCIENCE,NORMAL,noun,0,A small rocky body orbiting the sun.
+GRAVITON,SCIENCE,CHAOS,noun,0,A hypothetical particle of gravity.
+NEUTRINO,SCIENCE,CHAOS,noun,0,A nearly massless subatomic particle.
+PLASMA,SCIENCE,HARD,noun,0,An ionised state of matter.
+LASER,TECHNOLOGY,EASY,noun,0,A device emitting coherent light.
+RADAR,TECHNOLOGY,NORMAL,noun,0,A system detecting objects by radio waves.
+SONAR,TECHNOLOGY,NORMAL,noun,0,A system detecting objects by sound.
+TURBINE,ENGINEERING,NORMAL,noun,0,A machine driven by fluid flow.
+PISTON,ENGINEERING,NORMAL,noun,0,A sliding cylinder part in engines.
+VOLTAGE,ENGINEERING,NORMAL,noun,0,Electric potential difference.
+BATTERY,TECHNOLOGY,EASY,noun,0,A device storing chemical energy.
+ANTENNA,TECHNOLOGY,EASY,noun,0,A device for transmitting radio waves.
+TRANSISTOR,COMPUTER,NORMAL,noun,0,A semiconductor device amplifying signals.
+PROCESSOR,COMPUTER,EASY,noun,0,The part of a computer that executes instructions.
+BROWSER,COMPUTER,EASY,noun,0,Software for viewing web pages.
+SERVER,COMPUTER,EASY,noun,0,A computer providing services to others.
+DATABASE,COMPUTER,NORMAL,noun,0,An organised collection of data.
+FIREWALL,COMPUTER,NORMAL,noun,0,A network security barrier.
+PASSWORD,COMPUTER,EASY,noun,0,A secret used for authentication.
+KERNEL,COMPUTER,HARD,noun,0,The core of an operating system.
+COMPILER,COMPUTER,HARD,noun,0,A program that translates source code.
+DEBUG,COMPUTER,NORMAL,verb,0,To find and remove errors.
+ENCRYPT,COMPUTER,NORMAL,verb,0,To convert data into a code.
+CACHE,COMPUTER,NORMAL,noun,0,Fast temporary storage.
+CLOUD,COMPUTER,EASY,noun,0,Remote computing resources over the internet.
+ROBOT,TECHNOLOGY,EASY,noun,0,A programmable machine.
+DRONE,TECHNOLOGY,EASY,noun,0,An unmanned aircraft.
+SENSOR,TECHNOLOGY,NORMAL,noun,0,A device detecting physical changes.
+CIRCUITRY,ENGINEERING,HARD,noun,0,Electric circuits collectively.
+MICROSCOPE,OBJECT,NORMAL,noun,0,An instrument for viewing small objects.
+TELESCOPE,OBJECT,EASY,noun,0,An instrument for viewing distant objects.
+CALCULATOR,OBJECT,EASY,noun,0,A device for mathematical calculations.
+THERMOMETER,OBJECT,EASY,noun,0,An instrument for measuring temperature.
+BAROMETER,OBJECT,NORMAL,noun,0,An instrument for measuring pressure.
+OSCILLOSCOPE,ENGINEERING,CHAOS,noun,0,An instrument displaying waveforms.
+MICROWAVE,OBJECT,EASY,noun,0,An oven using electromagnetic waves.
+REFRIGERATOR,OBJECT,EASY,noun,0,An appliance for keeping food cold.
+ELEVATOR,OBJECT,EASY,noun,0,A platform that lifts people between floors.
+ESCALATOR,OBJECT,EASY,noun,0,A moving staircase.
+HELICOPTER,OBJECT,EASY,noun,0,An aircraft with rotating blades.
+SUBMARINE,OBJECT,NORMAL,noun,0,A vessel that travels underwater.
+GLIDER,OBJECT,NORMAL,noun,0,An aircraft without an engine.
+PARACHUTE,OBJECT,EASY,noun,0,A device for slowing a fall.
+KAYAK,OBJECT,EASY,noun,0,A small narrow canoe.
+ANCHOR,OBJECT,EASY,noun,0,A device holding a vessel in place.
+TREBUCHET,HISTORY,HARD,noun,0,A medieval siege engine.
+CROSSBOW,HISTORY,NORMAL,noun,0,A medieval ranged weapon.
+CATAPULT,HISTORY,NORMAL,noun,0,An ancient siege engine.
+HELMET,OBJECT,EASY,noun,0,Protective headgear.
+ARMOUR,HISTORY,NORMAL,noun,0,Protective covering worn in battle.
+SWORD,OBJECT,EASY,noun,0,A bladed weapon.
+SHIELD,OBJECT,EASY,noun,0,A defensive piece of armour.
+ARROW,OBJECT,EASY,noun,0,A projectile shot from a bow.
+COMPASSES,OBJECT,EASY,noun,0,An instrument for drawing circles.
+CHISEL,OBJECT,NORMAL,noun,0,A tool for shaping stone or wood.
+ANVIL,OBJECT,NORMAL,noun,0,A heavy block for forging metal.
+FORGE,ENGINEERING,NORMAL,noun,0,A workshop for shaping hot metal.
+WELD,ENGINEERING,NORMAL,verb,0,To join metals by heat.
+RIVET,ENGINEERING,NORMAL,noun,0,A fastener joining plates.
+TURBULENCE,SCIENCE,HARD,noun,0,Chaotic fluid flow.
+FRICTION,SCIENCE,NORMAL,noun,0,Force resisting relative motion.
+INERTIA,SCIENCE,HARD,noun,0,Resistance to change in motion.
+MOMENTUM,SCIENCE,NORMAL,noun,0,Mass multiplied by velocity.
+ENTHALPY,SCIENCE,CHAOS,noun,0,Heat content of a system.
+FUSION,SCIENCE,HARD,noun,0,Joining of atomic nuclei.
+FISSION,SCIENCE,HARD,noun,0,Splitting of atomic nuclei.
+RADIATION,SCIENCE,NORMAL,noun,0,Emission of energy as waves or particles.
+VACUUM,SCIENCE,NORMAL,noun,0,Space devoid of matter.
+PRISM,SCIENCE,NORMAL,noun,0,A transparent body splitting light.
+SPECTRUM,SCIENCE,NORMAL,noun,0,The range of wavelengths.
+LENS,OBJECT,EASY,noun,0,A curved piece of glass focusing light.
+MIRROR,OBJECT,EASY,noun,0,A surface reflecting images.
+ECHO,SCIENCE,EASY,noun,0,A reflected sound.
+RESONANCE,SCIENCE,HARD,noun,0,Amplified vibration at a natural frequency.
+FREQUENCY,SCIENCE,NORMAL,noun,0,Rate of repetition of a wave.
+WAVELENGTH,SCIENCE,HARD,noun,0,Distance between wave peaks.
+AMPLITUDE,SCIENCE,HARD,noun,0,Height of a wave.
+OSMOSIS,SCIENCE,HARD,noun,0,Movement of solvent through a membrane.
+PHOTOSYNTHESIS,SCIENCE,HARD,noun,0,How plants make food from light.
+CHLOROPHYLL,SCIENCE,HARD,noun,0,Green pigment used in photosynthesis.
+MITOCHONDRIA,MEDICAL,CHAOS,noun,0,Energy-producing cell organelles.
+RIBOSOME,MEDICAL,CHAOS,noun,0,A cell structure that builds proteins.
+CHROMOSOME,SCIENCE,HARD,noun,0,A DNA-carrying structure.
+MUTATION,SCIENCE,NORMAL,noun,0,A change in genetic material.
+EVOLUTION,SCIENCE,NORMAL,noun,0,Change in species over generations.
+ECOSYSTEM,SCIENCE,NORMAL,noun,0,A community of organisms and environment.
+BIOME,GEOGRAPHY,HARD,noun,0,A large ecological area.
+HABITAT,SCIENCE,EASY,noun,0,The natural home of an organism.
+PREDATOR,ANIMAL,EASY,noun,0,An animal that hunts others.
+SYMBIOSIS,SCIENCE,CHAOS,noun,0,Close interaction between species.
+MIGRATION,SCIENCE,NORMAL,noun,0,Seasonal movement of animals.
+CAMOUFLAGE,CONCEPT,NORMAL,noun,0,Disguise blending with surroundings.
+NOCTURNAL,CONCEPT,NORMAL,adjective,0,Active at night.
+HIBERNATION,SCIENCE,NORMAL,noun,0,Winter dormancy of animals.
+METAMORPHOSIS,SCIENCE,HARD,noun,0,Transformation of an animal's form.
+GIRAFFE,ANIMAL,EASY,noun,0,A tall African mammal with a long neck.
+ELEPHANT,ANIMAL,EASY,noun,0,The largest land animal.
+RHINOCEROS,ANIMAL,EASY,noun,0,A large animal with a horn on its nose.
+HIPPOPOTAMUS,ANIMAL,NORMAL,noun,0,A large river-dwelling African mammal.
+CROCODILE,ANIMAL,EASY,noun,0,A large aquatic reptile.
+TORTOISE,ANIMAL,EASY,noun,0,A slow-moving land reptile.
+CHAMELEON,ANIMAL,NORMAL,noun,0,A lizard that changes colour.
+FALCON,ANIMAL,EASY,noun,0,A fast bird of prey.
+OWL,ANIMAL,EASY,noun,0,A nocturnal bird of prey.
+DOLPHIN,ANIMAL,EASY,noun,0,An intelligent marine mammal.
+OCTOPUS,ANIMAL,EASY,noun,0,A sea animal with eight arms.
+JELLYFISH,ANIMAL,EASY,noun,0,A gelatinous marine animal.
+SEAHORSE,ANIMAL,EASY,noun,0,A small fish with a horse-like head.
+STINGRAY,ANIMAL,NORMAL,noun,0,A flat fish with a venomous tail.
+BARNACLE,ANIMAL,HARD,noun,0,A marine crustacean that clings to surfaces.
+PLANKTON,ANIMAL,HARD,noun,0,Tiny drifting aquatic organisms.
+KANGAROO,ANIMAL,EASY,noun,0,A hopping Australian marsupial.
+KOALA,ANIMAL,EASY,noun,0,A tree-dwelling Australian marsupial.
+PANDA,ANIMAL,EASY,noun,0,A bamboo-eating bear.
+LEOPARD,ANIMAL,EASY,noun,0,A spotted big cat.
+JAGUAR,ANIMAL,NORMAL,noun,0,A large spotted cat of the Americas.
+LYNX,ANIMAL,NORMAL,noun,0,A wild cat with tufted ears.
+WALRUS,ANIMAL,NORMAL,noun,0,A large Arctic marine mammal.
+NARWHAL,ANIMAL,HARD,noun,0,An Arctic whale with a long tusk.
+PANGOLIN,ANIMAL,CHAOS,noun,0,A scaly anteater.
+MEERKAT,ANIMAL,NORMAL,noun,0,A small burrowing mongoose.
+FERRET,ANIMAL,NORMAL,noun,0,A domesticated polecat.
+HAMSTER,ANIMAL,EASY,noun,0,A small rodent kept as a pet.
+SQUIRREL,ANIMAL,EASY,noun,0,A bushy-tailed rodent.
+HEDGEHOG,ANIMAL,EASY,noun,0,A small spiny mammal.
+RACCOON,ANIMAL,EASY,noun,0,A nocturnal mammal with a masked face.
+BADGER,ANIMAL,EASY,noun,0,A burrowing mammal.
+OTTER,ANIMAL,EASY,noun,0,A playful aquatic mammal.
+BEAVER,ANIMAL,NORMAL,noun,0,A dam-building rodent.
+MOOSE,ANIMAL,NORMAL,noun,0,A large northern deer.
+BISON,ANIMAL,NORMAL,noun,0,A large North American bovine.
+ANTELOPE,ANIMAL,NORMAL,noun,0,A swift horned mammal.
+GAZELLE,ANIMAL,NORMAL,noun,0,A slender fast antelope.
+ORANGUTAN,ANIMAL,NORMAL,noun,0,A large arboreal ape.
+GORILLA,ANIMAL,EASY,noun,0,The largest living primate.
+CHIMPANZEE,ANIMAL,NORMAL,noun,0,A great ape closely related to humans.
+LEMUR,ANIMAL,NORMAL,noun,0,A primate native to Madagascar.
+SLOTH,ANIMAL,EASY,noun,0,A slow-moving tree mammal.
+ARMADILLO,ANIMAL,NORMAL,noun,0,A mammal with a bony shell.
+ANTEATER,ANIMAL,NORMAL,noun,0,A mammal that eats ants.
+CHILI,FOOD,EASY,noun,0,A spicy stew or pepper.
+PAPRIKA,FOOD,NORMAL,noun,0,A ground red spice.
+TURMERIC,FOOD,NORMAL,noun,0,A yellow root spice.
+GINGER,FOOD,EASY,noun,0,A pungent root spice.
+SAFFRON,FOOD,HARD,noun,0,An expensive spice from crocus flowers.
+CUMIN,FOOD,NORMAL,noun,0,An aromatic seed spice.
+CARDAMOM,FOOD,HARD,noun,0,An aromatic spice pod.
+NUTMEG,FOOD,NORMAL,noun,0,A warm seed spice.
+BASIL,FOOD,EASY,noun,0,An aromatic herb.
+OREGANO,FOOD,EASY,noun,0,An aromatic herb.
+ROSEMARY,FOOD,EASY,noun,0,A fragrant herb.
+THYME,FOOD,EASY,noun,0,A small aromatic herb.
+CILANTRO,FOOD,NORMAL,noun,0,A leafy herb also called coriander.
+AVOCADO,FOOD,EASY,noun,0,A creamy green fruit.
+MANGO,FOOD,EASY,noun,0,A sweet tropical fruit.
+PAPAYA,FOOD,EASY,noun,0,A tropical fruit with orange flesh.
+GUAVA,FOOD,NORMAL,noun,0,A fragrant tropical fruit.
+LYCHEE,FOOD,NORMAL,noun,0,A small sweet tropical fruit.
+POMEGRANATE,FOOD,NORMAL,noun,0,A fruit full of red seeds.
+APRICOT,FOOD,EASY,noun,0,A small orange stone fruit.
+BLUEBERRY,FOOD,EASY,noun,0,A small blue berry.
+RASPBERRY,FOOD,EASY,noun,0,A red aggregate berry.
+CRANBERRY,FOOD,NORMAL,noun,0,A tart red bog berry.
+BLACKBERRY,FOOD,EASY,noun,0,A dark aggregate berry.
+MULBERRY,FOOD,NORMAL,noun,0,A dark berry from a mulberry tree.
+FIG,FOOD,EASY,noun,0,A sweet fruit with many seeds.
+DATE,FOOD,EASY,noun,0,A sweet brown fruit of the palm.
+PLUM,FOOD,EASY,noun,0,A smooth-skinned stone fruit.
+PEACH,FOOD,EASY,noun,0,A soft fuzzy stone fruit.
+NECTARINE,FOOD,NORMAL,noun,0,A smooth-skinned peach.
+GRAPEFRUIT,FOOD,EASY,noun,0,A large citrus fruit.
+TANGERINE,FOOD,EASY,noun,0,A small sweet citrus fruit.
+LIME,FOOD,EASY,noun,0,A small green citrus fruit.
+LEMON,FOOD,EASY,noun,0,A sour yellow citrus fruit.
+COCONUT,FOOD,EASY,noun,0,A large tropical palm fruit.
+CASHEW,FOOD,NORMAL,noun,0,A curved edible nut.
+ALMOND,FOOD,EASY,noun,0,An edible nut.
+PECAN,FOOD,NORMAL,noun,0,A rich edible nut.
+HAZELNUT,FOOD,NORMAL,noun,0,A small round nut.
+PEANUT,FOOD,EASY,noun,0,A legume often eaten as a nut.

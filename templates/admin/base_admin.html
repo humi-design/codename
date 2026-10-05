@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Admin - {{ app_name }}{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="row-between">
+    <h1 style="margin:0;">ADMIN</h1>
+    <a class="btn btn-sm" href="{{ url_for('admin.logout') }}">SIGN OUT</a>
+  </div>
+  <div class="btn-row" style="margin-top:10px;">
+    <a class="btn btn-sm {{ 'btn-primary' if request.endpoint == 'admin.dashboard' else '' }}" href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a class="btn btn-sm {{ 'btn-primary' if request.endpoint == 'admin.sessions' else '' }}" href="{{ url_for('admin.sessions') }}">Sessions</a>
+    <a class="btn btn-sm {{ 'btn-primary' if request.endpoint == 'admin.settings' else '' }}" href="{{ url_for('admin.settings') }}">Settings</a>
+    <a class="btn btn-sm {{ 'btn-primary' if request.endpoint == 'admin.adsense' else '' }}" href="{{ url_for('admin.adsense') }}">AdSense</a>
+  </div>
+</section>
+{% block admin_content %}{% endblock %}
+{% endblock %}

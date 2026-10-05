@@ -1,0 +1,54 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}AdSense - Admin{% endblock %}
+{% block admin_content %}
+
+<section class="card">
+  <h2>AdSense settings</h2>
+  <p class="muted small">Ads are only shown in reserved areas and never cover the board,
+    timer, guesses or host controls. When disabled, no AdSense script is loaded.</p>
+
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="field">
+      <label><input type="checkbox" name="adsense_enabled" value="1"
+        {{ 'checked' if adsense.enabled else '' }}> Enable AdSense</label>
+    </div>
+
+    <div class="field">
+      <label for="adsense_publisher_id">Publisher ID</label>
+      <input type="text" id="adsense_publisher_id" name="adsense_publisher_id"
+             value="{{ settings.adsense_publisher_id }}" placeholder="ca-pub-XXXXXXXXXXXXXXXX">
+    </div>
+
+    <div class="field">
+      <label for="adsense_slot_home">Home ad slot</label>
+      <input type="text" id="adsense_slot_home" name="adsense_slot_home"
+             value="{{ settings.adsense_slot_home }}" placeholder="1234567890">
+    </div>
+    <div class="field">
+      <label for="adsense_slot_join">Join page ad slot</label>
+      <input type="text" id="adsense_slot_join" name="adsense_slot_join"
+             value="{{ settings.adsense_slot_join }}">
+    </div>
+    <div class="field">
+      <label for="adsense_slot_player_top">Player page top</label>
+      <input type="text" id="adsense_slot_player_top" name="adsense_slot_player_top"
+             value="{{ settings.adsense_slot_player_top }}">
+    </div>
+    <div class="field">
+      <label for="adsense_slot_player_bottom">Player page bottom</label>
+      <input type="text" id="adsense_slot_player_bottom" name="adsense_slot_player_bottom"
+             value="{{ settings.adsense_slot_player_bottom }}">
+    </div>
+    <div class="field">
+      <label for="adsense_slot_session_summary">Session summary</label>
+      <input type="text" id="adsense_slot_session_summary" name="adsense_slot_session_summary"
+             value="{{ settings.adsense_slot_session_summary }}">
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block btn-lg">SAVE SETTINGS</button>
+  </form>
+</section>
+
+{% endblock %}

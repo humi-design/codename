@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Join game {{ session_code }} - {{ app_name }}{% endblock %}
+{% block content %}
+
+{% if ended %}
+  <section class="card center">
+    <h1>SESSION ENDED</h1>
+    <p class="muted">This session has ended.</p>
+    <p class="small muted">The invite code <strong>{{ session_code }}</strong> is no longer active.</p>
+    <a class="btn btn-primary btn-block" href="{{ url_for('main.index') }}">BACK TO HOME</a>
+  </section>
+{% else %}
+  <section class="card">
+    <h1>JOIN GAME</h1>
+    <div class="field">
+      <label>Game code</label>
+      <div class="code-display">{{ game_session.session_code }}</div>
+    </div>
+    <p class="muted small">Host: <strong>{{ game_session.host_name }}</strong> &middot;
+      {{ game_session.players|length }} player(s) already here.</p>
+    <form method="post" autocomplete="off">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field">
+        <label for="display_name">Your name</label>
+        <input type="text" id="display_name" name="display_name" maxlength="32"
+               placeholder="e.g. Rahul" required autofocus>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">JOIN GAME</button>
+    </form>
+    <p class="muted small" style="margin-top:10px;">No account, email or password needed.</p>
+  </section>
+
+  <div class="ad-slot">
+    {% with slot_name = "join" %}{% include "partials/adsense.html" %}{% endwith %}
+  </div>
+{% endif %}
+
+{% endblock %}

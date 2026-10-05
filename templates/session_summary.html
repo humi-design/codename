@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Session {{ summary.code }} summary{% endblock %}
+{% block content %}
+
+<section class="card">
+  <h1>SESSION {{ summary.code }}</h1>
+  <p>
+    <span class="pill {{ 'active' if summary.status == 'ACTIVE' else 'ended' }}">{{ summary.status }}</span>
+    <span class="pill">HOST {{ summary.host }}</span>
+  </p>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="num">{{ summary.rounds_played }}</div><div class="lbl">Rounds</div></div>
+    <div class="stat"><div class="num">{{ summary.players }}</div><div class="lbl">Players</div></div>
+    <div class="stat"><div class="num" style="color:var(--red)">{{ summary.red_wins }}</div><div class="lbl">Red wins</div></div>
+    <div class="stat"><div class="num" style="color:var(--blue)">{{ summary.blue_wins }}</div><div class="lbl">Blue wins</div></div>
+  </div>
+
+  <p class="muted small">
+    Started: {{ summary.created_at|datetimeformat }}<br>
+    Ended: {{ summary.ended_at|datetimeformat }}
+  </p>
+</section>
+
+<div class="ad-slot">
+  {% with slot_name = "session_summary" %}{% include "partials/adsense.html" %}{% endwith %}
+</div>
+
+<section class="card">
+  <h2>Rounds</h2>
+  {% if rounds %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead>
+        <tr><th>#</th><th>Winner</th><th>Red found</th><th>Blue found</th><th>Captain</th><th>Ended</th></tr>
+      </thead>
+      <tbody>
+        {% for r in rounds %}
+        <tr>
+          <td>{{ r.round_number }}</td>
+          <td>{{ r.winner or '-' }}</td>
+          <td>{{ r.total_for('RED') - r.remaining('RED') }} / {{ r.total_for('RED') }}</td>
+          <td>{{ r.total_for('BLUE') - r.remaining('BLUE') }} / {{ r.total_for('BLUE') }}</td>
+          <td>{{ r.captain.display_name if r.captain else '-' }}</td>
+          <td>{{ r.ended_at|datetimeformat }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted small">No rounds were played.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Players</h2>
+  <ul class="player-list">
+    {% for p in players %}
+    <li><span class="{{ 'dot-on' if p.is_connected else 'dot-off' }}">&#9679;</span>
+      <span class="pname">{{ p.display_name }}</span>
+      {% if p.is_host %}<span class="tag host">HOST</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<a class="btn btn-primary btn-block" href="{{ url_for('main.index') }}">BACK TO HOME</a>
+{% endblock %}

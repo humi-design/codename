@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ game_session.session_code }} - Red/Blue board{% endblock %}
+{% block content %}
+
+<section class="card tight">
+  <div class="row-between">
+    <span id="round-label" class="pill">ROUND {{ state.round.round_number if state.round else 1 }}</span>
+    <span class="small muted">{{ game_session.session_code }}
+      {% if state.round and state.round.my_team %}&middot; <span class="tag {{ state.round.my_team|lower }}">{{ state.round.my_team }} TEAM</span>{% endif %}
+    </span>
+  </div>
+  <div class="spacer"></div>
+  <div class="statusbar">
+    <span id="turn-indicator" class="turn-indicator {{ (state.round.current_team|lower) if state.round else 'red' }}">
+      {{ state.round.current_team if state.round else 'RED' }} TEAM'S TURN
+    </span>
+    <span class="timer" id="timer">--:--</span>
+  </div>
+</section>
+
+<section class="scorebar">
+  <div class="score red">
+    <div class="label">&#128308; RED REMAINING</div>
+    <div class="value" id="score-red">{{ state.round.scores.red if state.round else '-' }}</div>
+  </div>
+  <div class="score blue">
+    <div class="label">&#128309; BLUE REMAINING</div>
+    <div class="value" id="score-blue">{{ state.round.scores.blue if state.round else '-' }}</div>
+  </div>
+</section>
+
+<div class="ad-slot">
+  {% with slot_name = "player_top" %}{% include "partials/adsense.html" %}{% endwith %}
+</div>
+
+<section class="card tight">
+  <div class="board" id="board" data-size="{{ state.round.board_size if state.round else 5 }}"></div>
+  <p class="muted small center" id="board-hint">Tap a word to submit a guess.</p>
+</section>
+
+<div class="ad-slot">
+  {% with slot_name = "player_bottom" %}{% include "partials/adsense.html" %}{% endwith %}
+</div>
+
+<section class="card tight">
+  <h3>Players</h3>
+  <div class="grid-2">
+    <div>
+      <span class="tag red">RED</span>
+      <ul class="player-list" id="team-red"></ul>
+    </div>
+    <div>
+      <span class="tag blue">BLUE</span>
+      <ul class="player-list" id="team-blue"></ul>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block overlays %}
+<div class="overlay" id="guess-overlay" hidden>
+  <div class="modal">
+    <h3>Submit guess?</h3>
+    <div class="big-word" id="guess-word">&nbsp;</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="guess-confirm">SUBMIT</button>
+      <button class="btn" id="guess-cancel">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="winner-overlay" hidden>
+  <div class="modal center">
+    <h3>ROUND OVER</h3>
+    <div class="big-word" id="winner-text">&nbsp;</div>
+    <div class="btn-row">
+      <a class="btn btn-primary" id="winner-summary-link" href="#">ROUND SUMMARY</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.PLAYER = {
+    sessionCode: "{{ game_session.session_code }}",
+    playerToken: {{ player_token|tojson }},
+    playerId: {{ player.id }},
+    initialState: {{ state|tojson }},
+    pollUrl: "{{ url_for('player.state_api', session_code=game_session.session_code) }}",
+    guessUrl: "{{ url_for('player.guess_api', session_code=game_session.session_code) }}",
+    summaryBase: "/round/"
+  };
+</script>
+<script src="{{ url_for('static', filename='js/board.js') }}"></script>
+<script src="{{ url_for('static', filename='js/player.js') }}"></script>
+{% endblock %}

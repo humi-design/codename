@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }} - {{ app_name }}{% endblock %}
+{% block content %}
+  <section class="card center">
+    <h1>{{ code }}</h1>
+    <p class="muted">{{ message }}</p>
+    <a class="btn btn-primary btn-block" href="{{ url_for('main.index') }}">BACK TO HOME</a>
+  </section>
+{% endblock %}
