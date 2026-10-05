@@ -29,6 +29,10 @@ def main() -> int:
 
         AdminAuth.ensure_bootstrap_user()
 
+        from services.vocabulary.sources import ensure_source_rows
+
+        ensure_source_rows()
+
         print("Tables created:")
         for table in sorted(db.metadata.tables):
             print(f"  - {table}")

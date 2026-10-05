@@ -1,0 +1,74 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Import history - Admin{% endblock %}
+{% block admin_content %}
+
+<section class="card">
+  <div class="row-between">
+    <h2 style="margin:0;">Import history</h2>
+    <a class="btn btn-sm" href="{{ url_for('admin.vocabulary') }}">&larr; BACK</a>
+  </div>
+  <p class="muted small">Every vocabulary import run, newest first. Failed imports never
+    delete existing vocabulary.</p>
+
+  {% if imports %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>#</th><th>Source</th><th>Status</th><th>Mode</th>
+          <th>Processed</th><th>Imported</th><th>Updated</th>
+          <th>Rejected</th><th>Started</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for imp in imports %}
+        <tr>
+          <td>{{ imp.id }}</td>
+          <td>{{ imp.source }}{% if imp.label and imp.label != imp.source %}<br><span class="muted small">{{ imp.label }}</span>{% endif %}</td>
+          <td><span class="badge {{ 'success' if imp.status == 'COMPLETED' else ('error' if imp.status == 'FAILED' else ('warning' if imp.is_running else '')) }}">{{ imp.status }}</span></td>
+          <td>{{ imp.mode }}</td>
+          <td>{{ '{:,}'.format(imp.total_processed or 0) }}</td>
+          <td>{{ '{:,}'.format(imp.total_imported or 0) }}</td>
+          <td>{{ '{:,}'.format(imp.total_updated or 0) }}</td>
+          <td>{{ '{:,}'.format(imp.total_rejected or 0) }}</td>
+          <td>{{ imp.started_at or imp.created_at }}</td>
+          <td>
+            {% if imp.is_running %}
+            <form method="post" action="{{ url_for('admin.vocabulary_cancel', import_id=imp.id) }}" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">Cancel</button>
+            </form>
+            {% elif imp.status == 'FAILED' %}
+            <form method="post" action="{{ url_for('admin.vocabulary_retry', import_id=imp.id) }}" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm" type="submit">Retry</button>
+            </form>
+            {% endif %}
+            {% if imp.error_message %}
+            <br><span class="muted small" title="{{ imp.error_message }}">{{ imp.error_message[:60] }}{% if imp.error_message|length > 60 %}&hellip;{% endif %}</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if pagination.pages > 1 %}
+  <div class="btn-row" style="margin-top:12px;">
+    {% if pagination.has_prev %}
+    <a class="btn btn-sm" href="{{ url_for('admin.vocabulary_imports', page=pagination.prev_num) }}">&larr; Newer</a>
+    {% endif %}
+    <span class="muted small">Page {{ pagination.page }} of {{ pagination.pages }}</span>
+    {% if pagination.has_next %}
+    <a class="btn btn-sm" href="{{ url_for('admin.vocabulary_imports', page=pagination.next_num) }}">Older &rarr;</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <p class="muted small">No imports yet.</p>
+  {% endif %}
+</section>
+
+{% endblock %}

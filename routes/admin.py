@@ -1,7 +1,8 @@
-"""Super-admin routes: dashboard, sessions, settings and AdSense."""
+"""Super-admin routes: dashboard, sessions, settings, AdSense and vocabulary."""
 
 from __future__ import annotations
 
+import os
 from datetime import timedelta
 
 from flask import (
@@ -15,18 +16,27 @@ from flask import (
     url_for,
 )
 from sqlalchemy import func
+from werkzeug.utils import secure_filename
 
 from extensions import db
 from models.constants import SessionStatus, utcnow
 from models.game_session import GameSession
 from models.round import Round
 from models.session_player import SessionPlayer
+from models.vocabulary_import import VocabularyImport
+from models.vocabulary_source import VocabularySource
 from services.admin_auth import AdminAuth, admin_required
 from services.security import login_limiter
 from services.session_manager import SessionManager
 from services.settings_service import DEFAULTS, SettingsService
+from services.vocabulary.datasets import dataset_dir
+from services.vocabulary.import_manager import ImportError_, ImportManager
+from services.vocabulary.sources import ensure_source_rows
+from services.word_engine import WordEngine
 
 admin_bp = Blueprint("admin", __name__)
+
+_ALLOWED_UPLOAD_EXT = {".csv", ".txt", ".jsonl", ".json", ".tsv"}
 
 
 # ------------------------------------------------------------------- auth
@@ -157,7 +167,8 @@ def settings():
     if request.method == "POST":
         values = {}
         for key in DEFAULTS:
-            if key.startswith("adsense_"):
+            # AdSense and vocabulary settings have their own dedicated pages.
+            if key.startswith("adsense_") or key.startswith("vocab_"):
                 continue
             if key in request.form:
                 values[key] = request.form.get(key)
@@ -209,3 +220,180 @@ def health():
             status=SessionStatus.ACTIVE).count(),
         server_time=utcnow().isoformat(),
     )
+
+
+# ----------------------------------------------------------- vocabulary
+@admin_bp.route("/vocabulary")
+@admin_required
+def vocabulary():
+    try:
+        ensure_source_rows()
+    except Exception:  # pragma: no cover - table may not exist pre-migration
+        db.session.rollback()
+    status = ImportManager.status()
+    stats = WordEngine.statistics()
+    sources = VocabularySource.query.order_by(VocabularySource.name).all()
+    running = status["running_import"]
+    last = status["last_import"]
+    return render_template(
+        "admin/vocabulary.html",
+        vocab=status,
+        stats=stats,
+        sources=sources,
+        running=running,
+        last_import=last,
+        settings=SettingsService.all(),
+        dataset_dir=dataset_dir(SettingsService.get("vocab_dataset_dir")),
+    )
+
+
+@admin_bp.route("/vocabulary/status")
+@admin_required
+def vocabulary_status():
+    """Polled by the vocabulary page to show live import progress."""
+    status = ImportManager.status()
+    running = status["running_import"]
+    payload = {
+        "status": status["status"],
+        "total": status["total"],
+        "active": status["active"],
+        "inactive": status["inactive"],
+    }
+    if running is not None:
+        processed = int(running.total_processed or 0)
+        payload["import"] = {
+            "id": running.id,
+            "source": running.source,
+            "status": running.status,
+            "mode": running.mode,
+            "processed": processed,
+            "imported": running.total_imported,
+            "updated": running.total_updated,
+            "duplicates": running.total_duplicates,
+            "rejected": running.total_rejected,
+            "errors": running.total_errors,
+            "started_at": (running.started_at.isoformat()
+                           if running.started_at else None),
+        }
+    elif status["last_import"] is not None:
+        last = status["last_import"]
+        payload["import"] = {
+            "id": last.id,
+            "source": last.source,
+            "status": last.status,
+            "mode": last.mode,
+            "processed": last.total_processed,
+            "imported": last.total_imported,
+            "updated": last.total_updated,
+            "duplicates": last.total_duplicates,
+            "rejected": last.total_rejected,
+            "errors": last.total_errors,
+            "started_at": (last.started_at.isoformat()
+                           if last.started_at else None),
+            "completed_at": (last.completed_at.isoformat()
+                             if last.completed_at else None),
+            "error_message": last.error_message,
+        }
+    return jsonify(payload)
+
+
+@admin_bp.route("/vocabulary/import", methods=["POST"])
+@admin_required
+def vocabulary_import():
+    source = (request.form.get("source") or "kaikki").strip().lower()
+    mode = (request.form.get("mode") or "initial").strip().lower()
+    if mode not in ("initial", "update"):
+        mode = "initial"
+    try:
+        ImportManager.start(source, mode=mode, background=True)
+        flash(f"Vocabulary import started from source '{source}'.", "success")
+    except ImportError_ as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("admin.vocabulary"))
+
+
+@admin_bp.route("/vocabulary/upload", methods=["POST"])
+@admin_required
+def vocabulary_upload():
+    upload = request.files.get("file")
+    if upload is None or not upload.filename:
+        flash("Please choose a file to upload.", "error")
+        return redirect(url_for("admin.vocabulary"))
+
+    filename = secure_filename(upload.filename)
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in _ALLOWED_UPLOAD_EXT:
+        flash(f"Unsupported file type '{ext or 'unknown'}'. "
+              "Use .csv, .txt, .jsonl or .json.", "error")
+        return redirect(url_for("admin.vocabulary"))
+
+    target_dir = dataset_dir(SettingsService.get("vocab_dataset_dir"))
+    target = os.path.join(target_dir, f"custom_{utcnow():%Y%m%d%H%M%S}_{filename}")
+    upload.save(target)
+
+    try:
+        ImportManager.start("custom", mode="update", path=target,
+                            label=f"upload: {filename}", background=True)
+        flash(f"Uploaded '{filename}' and started import.", "success")
+    except ImportError_ as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("admin.vocabulary"))
+
+
+@admin_bp.route("/vocabulary/imports")
+@admin_required
+def vocabulary_imports():
+    page = max(1, int(request.args.get("page", 1)))
+    pagination = VocabularyImport.query.order_by(
+        VocabularyImport.id.desc()
+    ).paginate(page=page, per_page=25, error_out=False)
+    return render_template("admin/vocabulary_imports.html",
+                           pagination=pagination, imports=pagination.items)
+
+
+@admin_bp.route("/vocabulary/imports/<int:import_id>/cancel", methods=["POST"])
+@admin_required
+def vocabulary_cancel(import_id: int):
+    if ImportManager.cancel(import_id):
+        flash("Cancelling import...", "info")
+    else:
+        flash("That import is not running.", "error")
+    return redirect(url_for("admin.vocabulary"))
+
+
+@admin_bp.route("/vocabulary/imports/<int:import_id>/retry", methods=["POST"])
+@admin_required
+def vocabulary_retry(import_id: int):
+    record = db.session.get(VocabularyImport, import_id)
+    if record is None:
+        flash("Import not found.", "error")
+        return redirect(url_for("admin.vocabulary_imports"))
+    try:
+        ImportManager.start(
+            record.source, mode="update", path=record.path,
+            dataset_url=record.dataset_url,
+            label=record.label, background=True,
+        )
+        flash("Retry started.", "success")
+    except ImportError_ as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("admin.vocabulary"))
+
+
+@admin_bp.route("/vocabulary/filters", methods=["POST"])
+@admin_required
+def vocabulary_filters():
+    """Update the word-quality filters used by the board generator."""
+    SettingsService.set("vocab_max_chars", request.form.get("vocab_max_chars", "24"))
+    SettingsService.set("vocab_max_words", request.form.get("vocab_max_words", "3"))
+    SettingsService.set("vocab_min_frequency",
+                        request.form.get("vocab_min_frequency", "0"))
+    SettingsService.set("vocab_language",
+                        (request.form.get("vocab_language") or "en").strip()[:8])
+    SettingsService.set("vocab_allow_proper_nouns",
+                        "1" if request.form.get("vocab_allow_proper_nouns") else "0")
+    SettingsService.set("vocab_allow_multiword",
+                        "1" if request.form.get("vocab_allow_multiword") else "0")
+    db.session.commit()
+    flash("Vocabulary filters saved.", "success")
+    return redirect(url_for("admin.vocabulary"))

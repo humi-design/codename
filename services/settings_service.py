@@ -20,6 +20,23 @@ DEFAULTS: dict[str, tuple[str, bool]] = {
     "feature_spectator_mode": ("0", True),
     "feature_custom_word_list": ("1", True),
     "app_maintenance": ("0", True),
+
+    # -------------------------------------------------------- vocabulary
+    # Board word-quality filters.  Applied when a board is generated so
+    # unusual-but-legitimate vocabulary is kept by default.
+    "vocab_max_chars": ("24", False),
+    "vocab_max_words": ("3", False),
+    "vocab_allow_proper_nouns": ("1", True),
+    "vocab_allow_multiword": ("1", True),
+    "vocab_min_frequency": ("0", False),
+    "vocab_language": ("en", False),
+    "vocab_dataset_dir": ("data/datasets", False),
+    "vocab_kaikki_url": (
+        "https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl",
+        False,
+    ),
+    "vocab_wikidata_url": ("", False),
+    "vocab_auto_import": ("0", True),
 }
 
 
@@ -108,4 +125,19 @@ class SettingsService:
                 "player_bottom": SettingsService.get("adsense_slot_player_bottom", "") or "",
                 "session_summary": SettingsService.get("adsense_slot_session_summary", "") or "",
             },
+        }
+
+    # --------------------------------------------------------- vocabulary
+    @staticmethod
+    def word_filters() -> dict:
+        """Word-quality filters applied by the board generator."""
+        return {
+            "language": SettingsService.get("vocab_language", "en") or "en",
+            "max_chars": SettingsService.get_int("vocab_max_chars", 24),
+            "max_words": SettingsService.get_int("vocab_max_words", 3),
+            "allow_proper_nouns": SettingsService.get_bool(
+                "vocab_allow_proper_nouns", True
+            ),
+            "allow_multiword": SettingsService.get_bool("vocab_allow_multiword", True),
+            "min_frequency": SettingsService.get_int("vocab_min_frequency", 0),
         }
